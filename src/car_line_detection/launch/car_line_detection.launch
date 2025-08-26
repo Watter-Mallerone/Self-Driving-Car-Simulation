@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- usb_cam 노드를 실행 -->
+  <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" output="screen">
+   <param name="video_device" value="/dev/video0"/>
+    <param name="image_width" value="640"/>
+    <param name="image_height" value="480"/>
+    <param name="framerate" value="30"/>
+    <param name="pixel_format" value="mjpeg"/>
+  </node> 
+
+  <!-- Static Transform Publisher -->
+  <!-- <node pkg="tf2_ros" type="static_transform_publisher" name="map_to_base_link" args="0 0 0 0 0 1 map base_link 100" /> -->
+
+  <!-- image_processor 노드를 실행 -->
+  <!-- <node name="image_processor" pkg="car_line_detection" type="image_processor.py" output="screen">
+    <param name="frame_id" value="map" />
+  </node> -->
+</launch>

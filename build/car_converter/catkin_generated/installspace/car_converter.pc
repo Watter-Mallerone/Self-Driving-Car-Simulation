@@ -1,0 +1,8 @@
+prefix=/home/whstms1234/car_test/install
+
+Name: car_converter
+Description: Description of car_converter
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: geometry_msgs roscpp rospy sensor_msgs std_msgs

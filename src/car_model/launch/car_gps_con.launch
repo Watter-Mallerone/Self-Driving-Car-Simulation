@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<launch>
+
+<!-- Gazebo Model Offset-->
+	<arg name="x" default="0"/>
+  <arg name="y" default="0"/>
+  <arg name="z" default="1"/>
+  <arg name="roll" default="0"/>
+  <arg name="pitch" default="0"/>
+  <arg name="yaw" default="1"/>
+
+  <arg name="world" default="$(find car_model)/worlds/line_world.world"/>
+<!-- Gazebo World-->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(arg world)"/>
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="true"/>
+    <arg name="headless" value="false"/>
+    <arg name="debug" value="false"/>
+  </include>
+
+  <rosparam file="$(find car_ctrl)/config/car_ros_ctrl_setup.yaml" command="load"/>
+
+<!-- Gazebo Model Spawn-->
+	<param name="robot_description" command="$(find xacro)/xacro '$(find car_model)/urdf/car_model.xacro'"/>
+  <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+  	args="-urdf -model a_car -param robot_description 
+	-x $(arg x) -y $(arg y) -z $(arg z)
+    -R $(arg roll) -P $(arg pitch) -Y $(arg yaw)"/>
+
+  <!-- Rviz-->
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
+    <param name="use_tf_static" value="true"/>
+    <remap from="/joint_states" to="/a_car/joint_states"/>
+  </node>
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"/>
+  <!-- <node name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui"/> -->
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find car_model)/rviz/car_rviz.rviz" required="true"/>
+
+  <!-- ######### Controller ######### -->
+
+  <!-- Load joint controller configurations from YAML file to parameter server -->
+  <rosparam file="$(find car_ctrl)/config/car_ctrl_setup.yaml" command="load"/>
+
+  <!-- load the controllers -->
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" ns="/a_car"
+    args="joint_state_controller
+    FR_steer_ctrl FL_steer_ctrl
+    FR_wheel_ctrl FL_wheel_ctrl
+    RR_wheel_ctrl RL_wheel_ctrl"/>
+
+  <!-- <node pkg="tf" type="static_transform_publisher" name="world_to_map" args="1 0 0 0 0 0 world map 50"/> -->
+  <!-- <node pkg="tf" type="static_transform_publisher" name="map_to_odom" args="1 0 0 0 0 0 map odom 50"/> -->
+  <node pkg="tf" type="static_transform_publisher" name="odom_to_base_link" args="0 0 0 0 0 0 odom base_link 50"/>
+  <node name="odom_publisher" pkg="car_ctrl" type="odom_publisher" output="screen"/>
+
+  <node name="Car_Plugin" pkg="car_ctrl" type="Car_Plugin" output="screen">
+    <param name="robot_description" command="$(find xacro)/xacro '$(find car_model)/urdf/car_model.xacro'"/>
+  </node>
+
+</launch>

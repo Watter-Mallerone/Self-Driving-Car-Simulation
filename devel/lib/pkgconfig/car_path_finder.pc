@@ -1,0 +1,8 @@
+prefix=/home/whstms1234/car_test/devel
+
+Name: car_path_finder
+Description: Description of car_path_finder
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: geometry_msgs rospy std_msgs

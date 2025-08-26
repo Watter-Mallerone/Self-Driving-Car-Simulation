@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!-- Load joint controller configurations from YAML file to parameter server -->
+  <rosparam file="$(find car_ctrl)/config/car_ctrl_setup.yaml" command="load"/>
+
+  <!-- load the controllers -->
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" ns="/a_car"
+    args="joint_state_controller
+    FR_steer_ctrl FL_steer_ctrl
+    FR_wheel_ctrl FL_wheel_ctrl
+    RR_wheel_ctrl RL_wheel_ctrl"/>
+
+  <!-- <node pkg="tf" type="static_transform_publisher" name="world_to_map" args="1 0 0 0 0 0 world map 50"/>
+  <node pkg="tf" type="static_transform_publisher" name="map_to_odom" args="1 0 0 0 0 0 map odom 50"/> -->
+  <node pkg="tf" type="static_transform_publisher" name="odom_to_base_link" args="0 0 0 0 0 0 odom base_link 50"/>
+
+  <node name="world_publisher" pkg="car_ctrl" type="world_publisher" output="screen"/>
+  <!-- <node name="odom_publisher" pkg="car_ctrl" type="odom_publisher" output="screen"/> -->
+  <node name="gps_publisher" pkg="car_ctrl" type="gps_publisher" output="screen"/>
+  <node name="imu_publisher" pkg="car_ctrl" type="imu_publisher" output="screen"/>
+
+  <node name="Car_Plugin" pkg="car_ctrl" type="Car_Plugin" output="screen">
+    <param name="robot_description" command="$(find xacro)/xacro '$(find car_model)/urdf/car_model.xacro'"/>
+  </node>
+
+</launch>

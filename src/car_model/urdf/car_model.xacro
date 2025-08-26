@@ -1,0 +1,329 @@
+<?xml version="1.0"?>
+<robot name="a_car" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<!-- ***** Gazebo Setup ***** -->
+<xacro:include filename="$(find car_model)/urdf/car_gazebo_setup.xacro"/>
+<!-- ***** Hardware Interface Setup ***** -->
+<xacro:include filename="$(find car_model)/urdf/car_hardware_setup.xacro"/>
+<!-- ***** Camera Setup ***** -->
+<xacro:include filename="$(find car_model)/urdf/car_cam.xacro"/>
+<!-- ***** Depth Camera Setup ***** -->
+<xacro:include filename="$(find car_model)/urdf/car_depth_cam.xacro"/>
+<!-- ***** Lidar Setup ***** -->
+<xacro:include filename="$(find car_model)/urdf/car_lidar.xacro"/>
+
+<xacro:property name="math_pi" value="3.14159265"/>
+
+<xacro:property name="body_link_x_dim" value="1.3"/>
+<xacro:property name="body_link_y_dim" value="0.6"/>
+<xacro:property name="body_link_z_dim" value="0.3"/>
+
+<xacro:property name="steer_link_radius" value="0.1"/>
+<xacro:property name="steer_link_length" value="0.05"/>
+<xacro:property name="steer_link_x_pos" value="0.3625"/>
+<xacro:property name="steer_link_y_pos" value="0.35"/>
+<xacro:property name="steer_link_z_pos" value="0.15"/>
+
+<xacro:property name="steer_angle_limit" value="${math_pi/3}"/>
+
+<xacro:property name="wheel_link_radius" value="0.15"/>
+<xacro:property name="wheel_link_length" value="0.1"/>
+<xacro:property name="wheel_link_x_pos" value="0.3625"/>
+<xacro:property name="wheel_link_y_pos" value="0.35"/>
+<xacro:property name="wheel_link_z_pos" value="-0.05"/>
+
+<xacro:property name="body_density" value="2710.0"/>
+<xacro:property name="steer_density" value="2710.0"/>
+<xacro:property name="wheel_density" value="2710.0"/>
+
+<xacro:property name="body_mass" value="${body_density*body_link_x_dim*body_link_y_dim*body_link_z_dim}"/>
+<xacro:property name="steer_mass" value="${steer_density*math_pi*steer_link_radius*steer_link_radius*steer_link_length}"/>
+<xacro:property name="wheel_mass" value="${wheel_density*math_pi*wheel_link_radius*wheel_link_radius*wheel_link_length}"/>
+
+<!-- ***** Color ***** -->
+<xacro:macro name="body_color">
+    <material name="green">
+			<color rgba="0 1 0 1"/>
+	</material>
+</xacro:macro>
+
+<xacro:macro name="steer_color">
+    <material name="blue">
+			<color rgba="0 0 1 1"/>
+	</material>
+</xacro:macro>
+
+<xacro:macro name="wheel_color">
+    <material name="red">
+			<color rgba="1 0 0 1"/>
+	</material>
+</xacro:macro>
+
+<xacro:macro name="cam_color">
+    <material name="red">
+			<color rgba="1 0 0 1"/>
+	</material>
+</xacro:macro>
+
+<!-- ############### Setup ############### -->
+<!-- ***** Steer Setup ***** -->
+<xacro:macro name="steer_link_setup">
+    <!-- <visual>
+        <geometry>
+            <cylinder length="${steer_link_length}" radius="${steer_link_radius}"/>
+        </geometry>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <xacro:steer_color/>
+    </visual> -->
+
+    <collision>
+		<geometry>
+			<cylinder length="${steer_link_length}" radius="${steer_link_radius}"/>
+		</geometry>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+	</collision>
+
+	<inertial>
+	    <origin rpy="0 0 0" xyz="0 0 0"/>
+	    <mass value="${steer_mass}"/>
+	    <inertia
+        ixx="${(1.0/12.0)*steer_mass*(3.0*steer_link_radius*steer_link_radius+steer_link_length*steer_link_length)}" ixy="0.0" ixz="0.0"
+        iyy="${(1.0/12.0)*steer_mass*(3.0*steer_link_radius*steer_link_radius+steer_link_length*steer_link_length)}" iyz="0" 
+        izz="${0.5*steer_mass*steer_link_radius*steer_link_radius}"/>
+	</inertial>
+</xacro:macro>
+
+<!-- ***** Wheel Setup ***** -->
+<xacro:macro name="wheel_link_setup">
+    <visual>
+        <geometry>
+            <cylinder length="${wheel_link_length}" radius="${wheel_link_radius}"/>
+        </geometry>
+        <origin rpy="1.570795 0 0" xyz="0 0 0"/>
+        <xacro:wheel_color/>
+    </visual>
+
+    <collision>
+		<geometry>
+			<cylinder length="${wheel_link_length}" radius="${wheel_link_radius}"/>
+		</geometry>
+        <origin rpy="1.570795 0 0" xyz="0 0 0"/>
+	</collision>
+
+	<inertial>
+	    <origin rpy="1.570795 0 0" xyz="0 0 0"/>
+	        <mass value="${wheel_mass}"/>
+	    <inertia
+        ixx="${(1.0/12.0)*wheel_mass*(3.0*wheel_link_radius*wheel_link_radius+wheel_link_length*wheel_link_length)}" ixy="0.0" ixz="0.0"
+        iyy="${(1.0/12.0)*wheel_mass*(3.0*wheel_link_radius*wheel_link_radius+wheel_link_length*wheel_link_length)}" iyz="0"
+        izz="${0.5*wheel_mass*wheel_link_radius*wheel_link_radius}"/>
+	</inertial>
+</xacro:macro>
+
+<xacro:macro name="wheel_joint_setup">
+    <limit effort="1000" velocity="1000"/>
+	<dynamics dampi_constng="1.0" friction="1.0"/>
+</xacro:macro>
+
+<!-- ***** Camera Setup ***** -->
+<xacro:macro name="cam_pos_setup">
+    <origin xyz="0.05 0 0.8" rpy="0 ${pi/16} 0"/>
+</xacro:macro>
+
+<xacro:macro name="cam_size_setup">
+    <visual>
+        <geometry>
+            <box size="0.01 0.03 0.03"/>
+        </geometry>
+        <xacro:cam_color/>
+    </visual>
+    <collision>
+        <geometry>
+            <box size="0.01 0.03 0.03"/>
+        </geometry>
+    </collision>
+</xacro:macro>
+
+<!-- ***** Lidar Setup ***** -->
+<xacro:macro name="lidar_pos_setup">
+    <origin xyz="0.55 0 0.3" rpy="0 0 0"/>
+</xacro:macro>
+
+<xacro:macro name="lidar_size_setup">
+    <visual>
+        <geometry>
+            <cylinder length="0.05" radius="0.03"/>
+        </geometry>
+        <xacro:cam_color/>
+    </visual>
+    <collision>
+        <geometry>
+            <cylinder length="0.05" radius="0.03"/>
+        </geometry>
+    </collision>
+</xacro:macro>
+
+<!-- ***** Base Link ***** -->
+<link name="base_link">
+</link>
+
+<joint name="body_joint" type="fixed">
+	<parent link="base_link"/>
+	<child link="body_link"/>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+</joint>
+
+<!-- ############### Body Part ############### -->
+<link name="body_link">
+    <visual>
+        <geometry>
+            <mesh filename="package://car_model/urdf/meshes/visual/henes_body_model.stl"
+            scale="0.001 0.001 0.001"/>
+        </geometry>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+		<xacro:body_color/>
+    </visual>
+
+    <collision>
+        <geometry>
+            <mesh filename="package://car_model/urdf/meshes/visual/henes_body_model.stl"
+            scale="0.001 0.001 0.001"/>
+        </geometry>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+    </collision>
+
+    <inertial>
+		<origin rpy="0 0 0" xyz="0 0 0.15"/>
+		<mass value="${body_mass}"/>
+	<inertia 
+	ixx="${(1/12)*body_mass*(body_link_y_dim*body_link_y_dim+body_link_z_dim*body_link_z_dim)}" ixy="0" ixz="0" 
+    iyy="${(1/12)*body_mass*(body_link_x_dim*body_link_x_dim+body_link_z_dim*body_link_z_dim)}" iyz="0" 
+	izz="${(1/12)*body_mass*(body_link_y_dim*body_link_y_dim+body_link_x_dim*body_link_x_dim)}" />
+	</inertial>
+</link>
+
+<!-- ############### Camera Part ############### -->
+<joint name="camera_joint" type="fixed">
+    <parent link="body_link"/>
+    <child link="camera_link"/>
+    <xacro:cam_pos_setup/>
+</joint>
+
+<link name="camera_link">
+    <xacro:cam_size_setup/>
+</link>
+
+<!-- ############### Depth Camera Part ############### -->
+<joint name="depth_cam_joint" type="fixed">
+    <parent link="body_link"/>
+    <child link="depth_cam_link"/>
+    <xacro:cam_pos_setup/>
+</joint>
+
+<link name="depth_cam_link">
+    <xacro:cam_size_setup/>
+</link>
+
+<joint name="depth_cam_optical_joint" type="fixed">
+    <parent link="depth_cam_link"/>
+    <child link="depth_cam_optical_link"/>
+    <origin xyz="0 0 0" rpy="${-math_pi/2} 0 ${-math_pi/2}"/>
+</joint>
+
+<link name="depth_cam_optical_link">
+</link>
+
+<!-- ############### Lidar Camera Part ############### -->
+<joint name="lidar_joint" type="fixed">
+    <parent link="body_link"/>
+    <child link="lidar_link"/>
+    <xacro:lidar_pos_setup/>
+</joint>
+
+<link name="lidar_link">
+    <xacro:lidar_size_setup/>
+</link>
+
+<!-- ############### Steer Part ############### -->
+<!-- ***** Front Right ***** -->
+<joint name="FR_steer_joint" type="revolute">
+    <parent link="body_link"/>
+    <child link="FR_steer_link"/>
+    <origin xyz="${steer_link_x_pos} ${-steer_link_y_pos} ${steer_link_z_pos}" rpy="0 0 0" />
+	<axis xyz="0 0 -1"/>
+	<limit lower="${-steer_angle_limit}" upper="${steer_angle_limit}" effort="1000" velocity="1000"/>
+	<dynamics dampi_constng="1.0" friction="1.0"/>
+</joint>
+
+<link name="FR_steer_link">
+    <xacro:steer_link_setup/>
+</link>
+
+<!-- ***** Front Left ***** -->
+<joint name="FL_steer_joint" type="revolute">
+    <parent link="body_link"/>
+    <child link="FL_steer_link"/>
+    <origin xyz="${steer_link_x_pos} ${steer_link_y_pos} ${steer_link_z_pos}" rpy="0 0 0" />
+	<axis xyz="0 0 -1"/>
+	<limit lower="${-steer_angle_limit}" upper="${steer_angle_limit}" effort="1000" velocity="1000"/>
+	<dynamics dampi_constng="1.0" friction="1.0"/>
+</joint>
+
+<link name="FL_steer_link">
+    <xacro:steer_link_setup/>
+</link>
+
+<!-- ############### Wheel Part ############### -->
+<!-- ***** Front Right ***** -->
+<joint name="FR_wheel_joint" type="continuous">
+    <parent link="FR_steer_link"/>
+    <child link="FR_wheel_link"/>
+    <origin xyz="0 0 ${wheel_link_z_pos-steer_link_z_pos}" rpy="0 0 0" />
+	<axis xyz="0 1 0"/>
+    <xacro:wheel_joint_setup/>
+</joint>
+
+<link name="FR_wheel_link">
+    <xacro:wheel_link_setup/>
+</link>
+
+<!-- ***** Front Left ***** -->
+<joint name="FL_wheel_joint" type="continuous">
+    <parent link="FL_steer_link"/>
+    <child link="FL_wheel_link"/>
+    <origin xyz="0 0 ${wheel_link_z_pos-steer_link_z_pos}" rpy="0 0 0" />
+	<axis xyz="0 1 0"/>
+    <xacro:wheel_joint_setup/>
+</joint>
+
+<link name="FL_wheel_link">
+    <xacro:wheel_link_setup/>
+</link>
+
+<!-- ***** Rear Right ***** -->
+<joint name="RR_wheel_joint" type="continuous">
+    <parent link="body_link"/>
+    <child link="RR_wheel_link"/>
+    <origin xyz="${-wheel_link_x_pos-0.027} ${-wheel_link_y_pos} ${wheel_link_z_pos}" rpy="0 0 0" />
+	<axis xyz="0 1 0"/>
+    <xacro:wheel_joint_setup/>
+</joint>
+
+<link name="RR_wheel_link">
+    <xacro:wheel_link_setup/>
+</link>
+
+<!-- ***** Rear Left ***** -->
+<joint name="RL_wheel_joint" type="continuous">
+    <parent link="body_link"/>
+    <child link="RL_wheel_link"/>
+    <origin xyz="${-wheel_link_x_pos-0.027} ${wheel_link_y_pos} ${wheel_link_z_pos}" rpy="0 0 0" />
+	<axis xyz="0 1 0"/>
+    <xacro:wheel_joint_setup/>
+</joint>
+
+<link name="RL_wheel_link">
+    <xacro:wheel_link_setup/>
+</link>
+
+</robot>

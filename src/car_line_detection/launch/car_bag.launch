@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>    
+<node pkg="rosbag" type="play" name="rosbag_play" required="true" args="$(find car_line_detection)/bag/cam_test.bag -l --topics /usb_cam/image_raw"/>
+</launch>

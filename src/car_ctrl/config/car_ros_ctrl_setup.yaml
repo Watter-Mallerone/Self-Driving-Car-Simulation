@@ -1,0 +1,5 @@
+/a_car/gazebo_ros_control/pid_gains:
+  FR_wheel_joint: {p: 10.0, i: 0.0, d: 0.1}
+  FL_wheel_joint: {p: 10.0, i: 0.0, d: 0.1}
+  RR_wheel_joint: {p: 10.0, i: 0.0, d: 0.1}
+  RL_wheel_joint: {p: 10.0, i: 0.0, d: 0.1}

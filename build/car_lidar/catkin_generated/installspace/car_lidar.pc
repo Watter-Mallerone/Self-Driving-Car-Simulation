@@ -1,0 +1,8 @@
+prefix=/home/whstms1234/car_test/install
+
+Name: car_lidar
+Description: Description of car_lidar
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: rospy roscpp std_msgs sensor_msgs

@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<launch>
+  <node pkg="car_lidar" type="car_lidar" name="car_lidar" output="screen">
+    <param name="lidar_link" value="car_lidar" />
+    <!-- <remap from="scan" to="/your_robot_name/scan" /> -->
+  </node>
+</launch>

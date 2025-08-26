@@ -1,0 +1,26 @@
+a_car:
+  joint_state_controller:
+    type: "joint_state_controller/JointStateController"
+    publish_rate: 50
+
+  FR_steer_ctrl:
+    joint: FR_steer_joint
+    type: "effort_controllers/JointPositionController"
+    pid: {p: 10000.0, i: 0.1, d: 100.0}
+  FL_steer_ctrl:
+    joint: FL_steer_joint
+    type: "effort_controllers/JointPositionController"
+    pid: {p: 10000.0, i: 0.1, d: 100.0}
+
+  FR_wheel_ctrl:
+    joint: FR_wheel_joint
+    type: "velocity_controllers/JointVelocityController"
+  FL_wheel_ctrl:
+    joint: FL_wheel_joint
+    type: "velocity_controllers/JointVelocityController"
+  RR_wheel_ctrl:
+    joint: RR_wheel_joint
+    type: "velocity_controllers/JointVelocityController"
+  RL_wheel_ctrl:
+    joint: RL_wheel_joint
+    type: "velocity_controllers/JointVelocityController"

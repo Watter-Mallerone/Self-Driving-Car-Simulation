@@ -1,0 +1,2 @@
+car_converter:car_ctrl:car_lidar:car_line_detection:car_model:car_path_finder:car_rviz
+-DCATKIN_DEVEL_PREFIX=/home/whstms1234/car_test/devel -DCMAKE_INSTALL_PREFIX=/home/whstms1234/car_test/install -G Unix Makefiles

@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<robot>
+
+<gazebo reference="lidar_link">
+    <sensor name="laser" type="ray">
+        <pose> 0 0 0 0 0 0 </pose>
+        <visualize>true</visualize>
+        <update_rate>10</update_rate>
+        <always_on>1</always_on>
+        <ray>
+            <scan>
+                <horizontal>
+                    <samples>1947</samples>
+                    <min_angle>-3.14</min_angle>
+                    <max_angle>3.14</max_angle>
+                </horizontal>
+            </scan>
+            <range>
+                <min>0.1</min>
+                <max>10</max>
+            </range>
+        </ray>
+        <plugin name="laser_controller" filename="libgazebo_ros_laser.so">
+                <topicName>/scan</topicName>
+                <!-- <output_type>sensor_msgs/LaserScan</output_type> -->
+                <frameName>lidar_link</frameName>
+        </plugin>
+    </sensor>
+</gazebo>
+
+</robot>

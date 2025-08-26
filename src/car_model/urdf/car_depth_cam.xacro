@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<robot>
+
+<gazebo reference="depth_cam_link">
+<sensor name="depth_camera" type="depth">
+    <pose>0 0 0 0 0 0</pose>
+    <visualize>true</visualize>
+    <update_rate>30.0</update_rate>
+    <camera>
+        <horizontal_fov>1.089</horizontal_fov>
+        <image>
+            <width>640</width>
+            <height>480</height>
+            <format>B8G8R8</format>
+        </image>
+        <clip>
+            <near>0.1</near>
+            <far>10.0</far>
+        </clip>
+        <save enabled="false">
+        </save>
+    </camera>
+    <plugin name="camera_optical_controller" filename="libgazebo_ros_depth_camera.so">
+        <alwaysOn>true</alwaysOn>
+        <updateRate>0.0</updateRate>
+        <cameraName>depth_cam</cameraName>
+        <imageTopicName>image_raw</imageTopicName>
+        <pointCloudTopicName>points</pointCloudTopicName>
+        <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+        <frameName>depth_cam_optical_link</frameName>
+        <min_depth>0.1</min_depth>
+        <max_depth>100.0</max_depth>
+        <hackBaseline>0.01</hackBaseline>
+        <distortionK1>0.0</distortionK1>
+        <distortionK2>0.0</distortionK2>
+        <distortionK3>0.0</distortionK3>
+        <distortionT1>0.0</distortionT1>
+        <distortionT2>0.0</distortionT2>
+    </plugin>
+</sensor>
+</gazebo>
+
+</robot>

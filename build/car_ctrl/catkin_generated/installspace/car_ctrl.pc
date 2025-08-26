@@ -1,0 +1,8 @@
+prefix=/home/whstms1234/car_test/install
+
+Name: car_ctrl
+Description: Description of car_ctrl
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: rospy roscpp std_msgs controller_manager joint_state_controller robot_state_publisher hardware_interface transmission_interface gazebo_ros_control gazebo_plugins gazebo_ros geometry_msgs tf nav_msgs

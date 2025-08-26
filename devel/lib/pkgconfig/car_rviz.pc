@@ -1,0 +1,8 @@
+prefix=/home/whstms1234/car_test/devel
+
+Name: car_rviz
+Description: Description of car_rviz
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: geometry_msgs roscpp rospy rviz std_msgs sensor_msgs visualization_msgs

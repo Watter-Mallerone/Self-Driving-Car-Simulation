@@ -1,0 +1,8 @@
+prefix=/home/whstms1234/car_test/install
+
+Name: car_line_detection
+Description: Description of car_line_detection
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: rospy roscpp std_msgs cv_bridge sensor_msgs image_transport
